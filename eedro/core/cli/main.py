@@ -31,7 +31,6 @@ from ...contrib.log import LogLevel, enable_console_log
 @click.option(
     "--console-log",
     is_flag=True,
-    show_default=True,
     help="Enable logging to console.",
 )
 def main_cmd(*, console_log: bool = False, **options) -> None:
