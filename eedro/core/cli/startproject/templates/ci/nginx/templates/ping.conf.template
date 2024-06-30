@@ -1,0 +1,14 @@
+upstream ping_upstream {
+    server ping:80;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    ssi on;
+
+    location / {
+        proxy_pass http://ping_upstream;
+    }
+}

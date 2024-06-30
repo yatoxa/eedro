@@ -1,0 +1,9 @@
+*
+
+!ci
+!bin
+!etc
+!$%{root_namespace}
+!tests
+!pyproject.toml
+!setup.py

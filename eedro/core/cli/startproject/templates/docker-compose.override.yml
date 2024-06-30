@@ -1,0 +1,27 @@
+services:
+
+  nginx:
+    volumes:
+      - ./ci/nginx/templates:/etc/nginx/templates
+
+  ping:
+    volumes:
+      - ./:/app/src
+
+  pong:
+    volumes:
+      - ./:/app/src
+
+  cli:
+    volumes:
+      - ./:/app/src
+
+  tests:
+    build:
+      dockerfile: ci/tests/Dockerfile
+    command: /bin/bash /app/src/ci/tests/run.sh
+    volumes:
+      - ./:/app/src
+    depends_on:
+      - base
+      - nginx

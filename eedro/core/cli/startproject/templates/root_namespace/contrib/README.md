@@ -1,0 +1,1 @@
+The $%{root_namespace}.contrib package must contain code that has no dependencies on the main project code and can be used in other projects, similar to django.contrib.

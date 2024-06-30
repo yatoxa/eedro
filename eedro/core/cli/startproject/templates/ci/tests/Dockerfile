@@ -1,0 +1,9 @@
+FROM $%{project_name}-base
+
+ARG PROJECT_HOME=/app
+ARG PROJECT_SRC=${PROJECT_HOME}/src
+ARG PROJECT_WD=${PROJECT_HOME}/run
+ARG VENV_HOME=${PROJECT_HOME}/venv
+ARG PYTHON_VENV=${VENV_HOME}/bin/python
+
+RUN ${PYTHON_VENV} -m pip install -U -r ${PROJECT_SRC}/etc/requirements-tests.txt

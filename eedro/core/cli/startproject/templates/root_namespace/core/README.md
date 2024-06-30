@@ -1,0 +1,1 @@
+The $%{root_namespace}.core package must contain the main code of the project.

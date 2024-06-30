@@ -1,0 +1,34 @@
+services:
+
+  nginx:
+    image: $%{project_name}-nginx
+    build:
+      dockerfile: ci/nginx/Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - ping
+      - pong
+
+  base:
+    image: $%{project_name}-base
+    build:
+      dockerfile: ci/base/Dockerfile
+
+  ping:
+    image: $%{project_name}-base
+    command: /bin/bash /app/src/ci/ping/run.sh
+    depends_on:
+      - base
+
+  pong:
+    image: $%{project_name}-base
+    command: /bin/bash /app/src/ci/pong/run.sh
+    depends_on:
+      - base
+
+  cli:
+    image: $%{project_name}-base
+    command: tail -f /dev/stdout
+    depends_on:
+      - base
