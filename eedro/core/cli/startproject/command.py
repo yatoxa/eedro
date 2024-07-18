@@ -128,7 +128,12 @@ class StartProjectCommand(BaseCommand):
     ) -> None:
         self._templates_dir = templates_dir
 
-        if next(project_path.iterdir(), False) and not force and not ignore:
+        if (
+            project_path.exists()
+            and next(project_path.iterdir(), False)
+            and not force
+            and not ignore
+        ):
             raise click.UsageError(
                 f"{project_path} directory is not empty, change the project path"
                 f" or use the -f|--force flag to overwrite existing files"
@@ -155,7 +160,6 @@ class StartProjectCommand(BaseCommand):
     "--path",
     "project_path",
     type=click.Path(
-        exists=True,
         file_okay=False,
         resolve_path=True,
         path_type=pathlib.Path,
