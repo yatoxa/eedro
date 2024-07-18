@@ -9,7 +9,7 @@ import click
 
 from ....contrib.cli.base import BaseCommand
 
-TEMPLATE_DIR = pathlib.Path(__file__).parent.resolve() / "templates"
+DEFAULT_TEMPLATES_DIR = pathlib.Path(__file__).parent.resolve() / "templates"
 
 PLACEHOLDERS_TO_REPLACE_IN_DEST_FILENAMES = {
     "project_name": "project_name",
@@ -43,6 +43,8 @@ class Template(string.Template):
 class StartProjectCommand(BaseCommand):
     reraise_exceptions = (click.UsageError,)
 
+    _templates_dir: pathlib.Path
+
     def get_dest_filename(self, src_filename: str, context: Dict[str, Any]) -> str:
         for placeholder, var_name in PLACEHOLDERS_TO_REPLACE_IN_DEST_FILENAMES.items():
             src_filename = src_filename.replace(placeholder, context[var_name])
@@ -55,7 +57,7 @@ class StartProjectCommand(BaseCommand):
         project_path: str,
         context: Dict[str, Any],
     ) -> pathlib.Path:
-        dest_dir = src_dir.replace(str(TEMPLATE_DIR), project_path)
+        dest_dir = src_dir.replace(str(self._templates_dir), project_path)
         dest_dir = pathlib.Path(self.get_dest_filename(dest_dir, context))
         dest_dir.mkdir(mode=0o755, parents=True, exist_ok=True)
         return dest_dir
@@ -97,9 +99,9 @@ class StartProjectCommand(BaseCommand):
             root_namespace=root_namespace,
         )
 
-        for template_dir, _, template_files in os.walk(TEMPLATE_DIR):
-            src_dir = pathlib.Path(template_dir).resolve()
-            dest_dir = self.get_dest_dir(template_dir, str(project_path), context)
+        for templates_dir, _, template_files in os.walk(self._templates_dir):
+            src_dir = pathlib.Path(templates_dir).resolve()
+            dest_dir = self.get_dest_dir(templates_dir, str(project_path), context)
 
             for template_file in template_files:
                 if self.ignore_template_file(template_file):
@@ -119,10 +121,13 @@ class StartProjectCommand(BaseCommand):
         self,
         *,
         project_path: pathlib.Path,
+        templates_dir: pathlib.Path,
         force: bool,
         ignore: bool,
         **options,
     ) -> None:
+        self._templates_dir = templates_dir
+
         if next(project_path.iterdir(), False) and not force and not ignore:
             raise click.UsageError(
                 f"{project_path} directory is not empty, change the project path"
@@ -157,6 +162,20 @@ class StartProjectCommand(BaseCommand):
     ),
     required=True,
     help="Path to the new project.",
+)
+@click.option(
+    "-t",
+    "--templates",
+    "templates_dir",
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        resolve_path=True,
+        path_type=pathlib.Path,
+    ),
+    default=DEFAULT_TEMPLATES_DIR,
+    show_default=True,
+    help="Path to the templates directory.",
 )
 @click.option(
     "-r",
