@@ -16,3 +16,13 @@ extend-exclude='''
 ^/eedro/core/cli/startproject/templates
 )
 '''
+
+[tool.pytest.ini_options]
+minversion = '6.0'
+asyncio_mode = 'auto'
+markers = [
+    'asyncio',
+]
+testpaths = [
+    'tests',
+]

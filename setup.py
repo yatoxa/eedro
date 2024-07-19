@@ -1,8 +1,10 @@
 from setuptools import find_packages, setup
 
+from eedro import get_version
+
 setup(
     name="eedro",
-    version="0.0.1",
+    version=get_version(),
     author="Anton Yantsen",
     packages=find_packages(
         exclude=(

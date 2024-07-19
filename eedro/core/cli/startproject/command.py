@@ -146,7 +146,6 @@ class StartProjectCommand(BaseCommand):
             )
 
 
-@click.command("startproject")
 @click.option(
     "-n",
     "--name",
@@ -207,6 +206,7 @@ class StartProjectCommand(BaseCommand):
     is_flag=True,
     help="Use files that exist in the new project path.",
 )
+@click.command("startproject")
 @click.pass_context
 def startproject_cmd(ctx: click.Context, **options) -> None:
     StartProjectCommand(ctx.command.name, **ctx.parent.params).run(**options)

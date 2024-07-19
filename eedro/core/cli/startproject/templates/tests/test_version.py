@@ -9,6 +9,10 @@ from $%{root_namespace}.core.server.base import make_app
 from $%{root_namespace}.core.server.base import version as version_view
 
 
+def test_get_version():
+    assert $%{root_namespace}.get_version() == $%{root_namespace}.__version__.VERSION
+
+
 @pytest.mark.parametrize(
     "version,expected",
     [

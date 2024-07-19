@@ -1,0 +1,34 @@
+services:
+
+  tests-py310:
+    build:
+      dockerfile: ci/tests/Dockerfile
+      args:
+        BASE_IMAGE: eedro-base-py310
+    command: /bin/bash /app/src/ci/tests/run.sh
+    volumes:
+      - ./:/app/src
+    depends_on:
+      - base-py310
+
+  tests-py311:
+    build:
+      dockerfile: ci/tests/Dockerfile
+      args:
+        BASE_IMAGE: eedro-base-py311
+    command: /bin/bash /app/src/ci/tests/run.sh
+    volumes:
+      - ./:/app/src
+    depends_on:
+      - base-py311
+
+  tests-py312:
+    build:
+      dockerfile: ci/tests/Dockerfile
+      args:
+        BASE_IMAGE: eedro-base-py312
+    command: /bin/bash /app/src/ci/tests/run.sh
+    volumes:
+      - ./:/app/src
+    depends_on:
+      - base-py312

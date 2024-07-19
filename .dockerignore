@@ -1,0 +1,8 @@
+*
+
+!ci
+!etc
+!eedro
+!tests
+!pyproject.toml
+!setup.py

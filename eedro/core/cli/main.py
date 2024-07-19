@@ -3,6 +3,7 @@ import pathlib
 
 import click
 
+from ... import get_version
 from ...contrib.log import LogLevel, enable_console_log
 
 
@@ -33,6 +34,7 @@ from ...contrib.log import LogLevel, enable_console_log
     is_flag=True,
     help="Enable logging to console.",
 )
+@click.version_option(version=get_version(), package_name="eedro")
 def main_cmd(*, console_log: bool = False, **options) -> None:
     if console_log:
         enable_console_log()
