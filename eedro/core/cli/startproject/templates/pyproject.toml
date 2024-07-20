@@ -1,3 +1,6 @@
+[tool.distutils.egg_info]
+egg_base = '/tmp/$%{root_namespace}_build'
+
 [tool.isort]
 profile = 'black'
 skip_gitignore = true
@@ -13,6 +16,7 @@ target-version = $%{black_target_version}
 
 [tool.pytest.ini_options]
 minversion = '6.0'
+cache_dir = '/tmp/pytest_cache'
 asyncio_mode = 'auto'
 markers = [
     'asyncio',
