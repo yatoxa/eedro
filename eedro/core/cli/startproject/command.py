@@ -3,7 +3,8 @@ import pathlib
 import re
 import shutil
 import string
-from typing import Any, Dict, Optional
+from dataclasses import asdict, dataclass
+from typing import Optional
 
 import click
 
@@ -36,6 +37,39 @@ PYTHON_CONTEXTS = {
 }
 
 
+@dataclass(kw_only=True)
+class Context:
+    project_name: str
+    project_name_underscore: str
+    project_title: str
+    root_namespace: str
+    black_target_version: str
+    python_docker_image: str
+
+    @classmethod
+    def get_context(
+        cls,
+        *,
+        project_name: str,
+        python_version: str,
+        root_namespace: str,
+        **kwargs,
+    ) -> "Context":
+        project_name = project_name.replace("_", "-")
+        project_name_underscore = project_name.replace("-", "_")
+        return Context(
+            project_name=project_name,
+            project_name_underscore=project_name_underscore,
+            project_title=project_name.replace("-", " ").capitalize(),
+            root_namespace=root_namespace or project_name_underscore,
+            **PYTHON_CONTEXTS[python_version],
+            **kwargs,
+        )
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
 class Template(string.Template):
     delimiter = "$%"
 
@@ -45,9 +79,9 @@ class StartProjectCommand(BaseCommand):
 
     _templates_dir: pathlib.Path
 
-    def get_dest_filename(self, src_filename: str, context: Dict[str, Any]) -> str:
+    def get_dest_filename(self, src_filename: str, context: Context) -> str:
         for placeholder, var_name in PLACEHOLDERS_TO_REPLACE_IN_DEST_FILENAMES.items():
-            src_filename = src_filename.replace(placeholder, context[var_name])
+            src_filename = src_filename.replace(placeholder, getattr(context, var_name))
 
         return src_filename
 
@@ -55,7 +89,7 @@ class StartProjectCommand(BaseCommand):
         self,
         src_dir: str,
         project_path: str,
-        context: Dict[str, Any],
+        context: Context,
     ) -> pathlib.Path:
         dest_dir = src_dir.replace(str(self._templates_dir), project_path)
         dest_dir = pathlib.Path(self.get_dest_filename(dest_dir, context))
@@ -72,16 +106,13 @@ class StartProjectCommand(BaseCommand):
         project_name: str,
         python_version: str,
         root_namespace: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        project_name = project_name.replace("_", "-")
-        project_name_underscore = project_name.replace("-", "_")
-        return {
-            "project_name": project_name,
-            "project_name_underscore": project_name_underscore,
-            "project_title": project_name.replace("-", " ").capitalize(),
-            "root_namespace": root_namespace or project_name_underscore,
-            **PYTHON_CONTEXTS[python_version],
-        }
+    ) -> Context:
+        # TODO: get context class from cli params, use the Context as default one!
+        return Context.get_context(
+            project_name=project_name,
+            python_version=python_version,
+            root_namespace=root_namespace,
+        )
 
     def handle(
         self,
@@ -114,7 +145,7 @@ class StartProjectCommand(BaseCommand):
                     continue
 
                 template = Template(src_file.read_text())
-                dest_file.write_text(template.substitute(**context))
+                dest_file.write_text(template.substitute(**context.to_dict()))
                 shutil.copymode(src_file, dest_file)
 
     def validate_options(
