@@ -4,11 +4,13 @@ import re
 import shutil
 import string
 from dataclasses import asdict, dataclass
-from typing import Optional
+from functools import cached_property
+from typing import Optional, Type
 
 import click
+from pydantic.v1.utils import import_string
 
-from ....contrib.cli.base import BaseCommand
+from ....contrib.cli.base import BaseCommand, CommandError
 
 DEFAULT_TEMPLATES_DIR = pathlib.Path(__file__).parent.resolve() / "templates"
 
@@ -78,6 +80,7 @@ class StartProjectCommand(BaseCommand):
     reraise_exceptions = (click.UsageError,)
 
     _templates_dir: pathlib.Path
+    _context_class_path: Optional[str] = None
 
     def get_dest_filename(self, src_filename: str, context: Context) -> str:
         for placeholder, var_name in PLACEHOLDERS_TO_REPLACE_IN_DEST_FILENAMES.items():
@@ -101,14 +104,29 @@ class StartProjectCommand(BaseCommand):
             if re.match(pattern, template_file_path):
                 return True
 
+    @cached_property
+    def context_class(self) -> Type[Context]:
+        if self._context_class_path:
+            try:
+                context_class = import_string(self._context_class_path)
+            except ImportError as e:
+                raise CommandError(e) from e
+
+            if not issubclass(context_class, Context):
+                raise click.UsageError(
+                    "Custom context class must be subclass of the Context class."
+                )
+
+            return context_class
+        return Context
+
     def get_context(
         self,
         project_name: str,
         python_version: str,
         root_namespace: Optional[str] = None,
     ) -> Context:
-        # TODO: get context class from cli params, use the Context as default one!
-        return Context.get_context(
+        return self.context_class.get_context(
             project_name=project_name,
             python_version=python_version,
             root_namespace=root_namespace,
@@ -153,11 +171,13 @@ class StartProjectCommand(BaseCommand):
         *,
         project_path: pathlib.Path,
         templates_dir: pathlib.Path,
+        context_class_path: Optional[str],
         force: bool,
         ignore: bool,
         **options,
     ) -> None:
         self._templates_dir = templates_dir
+        self._context_class_path = context_class_path
 
         if (
             project_path.exists()
@@ -210,6 +230,13 @@ class StartProjectCommand(BaseCommand):
     default=DEFAULT_TEMPLATES_DIR,
     show_default=True,
     help="Path to the templates directory.",
+)
+@click.option(
+    "-c",
+    "--context-class",
+    "context_class_path",
+    type=str,
+    help="Python (or dotted) path to the context class.",
 )
 @click.option(
     "-r",

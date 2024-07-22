@@ -14,6 +14,8 @@ setup(
     ),
     install_requires=[
         "click~=8.1",
+        "PyYAML~=6.0",
+        "pydantic~=2.8",
     ],
     entry_points={
         "console_scripts": ("eedro=eedro.__main__:main_cmd",),
