@@ -59,3 +59,23 @@ class BaseCommand:
                 raise
 
             sys.exit(f'command "{self._command_name}" failed with error: {e!r}')
+
+
+class AsyncBaseCommand(BaseCommand):
+    async def handle(self, **options) -> None:
+        raise NotImplementedError
+
+    async def validate_options(self, **options) -> None:
+        pass
+
+    async def run(self, **options) -> None:
+        try:
+            await self.validate_options(**options)
+            await self.handle(**options)
+        except self.reraise_exceptions:
+            raise
+        except (CommandError, SettingsError) as e:
+            if self._log_level == LogLevel.DEBUG:
+                raise
+
+            sys.exit(f'command "{self._command_name}" failed with error: {e!r}')
