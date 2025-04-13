@@ -59,13 +59,17 @@ class RateLimiter:
         return self
 
     async def stop(self) -> None:
-        await asyncio.gather(bkl.stop() for bkl in self._by_key_limiters.values())
+        if self._by_key_limiters:
+            await asyncio.gather(bkl.stop() for bkl in self._by_key_limiters.values())
+
         self._stop = True
 
         for task in self._tasks:
             task.cancel()
 
-        await asyncio.gather(*self._tasks, return_exceptions=True)
+        if self._tasks:
+            await asyncio.gather(*self._tasks, return_exceptions=True)
+
         self._release_waiters(every=True)
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
