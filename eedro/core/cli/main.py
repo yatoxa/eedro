@@ -34,17 +34,19 @@ def get_main_cmd(root_pkg: ModuleType) -> Callable:
         help="Set logging level.",
     )
     @click.option(
-        "--console-log",
+        "-q",
+        "--quiet",
         is_flag=True,
-        help="Enable logging to console.",
+        help="Disable logging to console.",
     )
     @click.version_option(
         version=root_pkg.get_version(),
         package_name=root_pkg.__name__,
     )
-    def _main_cmd(*, console_log: bool = False, **options) -> None:
-        if console_log:
+    def _main_cmd(*, log_level: LogLevel, quiet: bool, **options) -> None:
+        if not quiet:
             enable_console_log()
+            log_level.set_log_level(reset_logging_config=True)
 
     return _main_cmd
 
