@@ -22,6 +22,7 @@ class RateLimiter:
         self._counter = None
         self._tasks = []
         self._stop = False
+        self._is_working = False
         self._by_key_limiters = {}
         self._waiters = collections.deque()
         self._loop = asyncio.get_running_loop()
@@ -51,7 +52,10 @@ class RateLimiter:
                 )
 
     async def run(self) -> None:
-        self._tasks.append(asyncio.create_task(self._limit_controller()))
+        if not self._is_working:
+            self._tasks.append(asyncio.create_task(self._limit_controller()))
+            self._is_working = True
+
         await asyncio.sleep(0)
 
     async def __aenter__(self) -> "RateLimiter":
