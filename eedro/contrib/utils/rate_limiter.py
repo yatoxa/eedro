@@ -1,6 +1,7 @@
 import asyncio
 import collections
 import logging
+from datetime import datetime, timedelta
 from typing import Optional
 
 
@@ -23,9 +24,20 @@ class RateLimiter:
         self._tasks = []
         self._stop = False
         self._is_working = False
+        self._extra_delay_until = None
         self._by_key_limiters = {}
         self._waiters = collections.deque()
         self._loop = asyncio.get_running_loop()
+
+    async def _check_extra_delay(self) -> None:
+        if self._extra_delay_until:
+            extra_delay = (self._extra_delay_until - datetime.now()).total_seconds()
+
+            if extra_delay > 0:
+                logging.warning("Extra %.3f second delay activated!", extra_delay)
+                await asyncio.sleep(extra_delay)
+
+            self._extra_delay_until = None
 
     def _release_waiters(self, every=False) -> None:
         waiters_count = len(self._waiters)
@@ -42,6 +54,7 @@ class RateLimiter:
             self._counter = 0
             self._release_waiters()
             await asyncio.sleep(self._period)
+            await self._check_extra_delay()
 
             if self._label is not None:
                 logging.debug(
@@ -64,7 +77,9 @@ class RateLimiter:
 
     async def stop(self) -> None:
         if self._by_key_limiters:
-            await asyncio.gather(bkl.stop() for bkl in self._by_key_limiters.values())
+            await asyncio.gather(
+                *(bkl.stop() for bkl in self._by_key_limiters.values())
+            )
 
         self._stop = True
 
@@ -83,6 +98,10 @@ class RateLimiter:
         waiter = self._loop.create_future()
         self._waiters.append(waiter)
         await waiter
+
+    def activate_extra_delay(self, retry_after: int | float) -> None:
+        self._counter = self._limit
+        self._extra_delay_until = datetime.now() + timedelta(seconds=retry_after)
 
     async def acquire_limit(self, *, no_wait: bool = False) -> int:
         if self._limit == 0:
