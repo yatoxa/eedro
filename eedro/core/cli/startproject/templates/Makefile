@@ -5,7 +5,7 @@ ifeq ($(wildcard $(PYTHON_VENV)),)
   $(info --- venv not found, to initialize it, run make venv or make venv-dev ---)
 endif
 
-PYTHON ?= python3.10
+PYTHON ?= $%{python_local_version}
 
 .PHONY: venv-init venv-update venv-update-dev venv venv-dev pretty lint pretty-lint docker-clean docker-build docker-up docker-rebuild docker-logs tests
 

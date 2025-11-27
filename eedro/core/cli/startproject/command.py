@@ -26,14 +26,17 @@ SOURCE_PATHS_TO_IGNORE = [
 PYTHON_CONTEXTS = {
     "3.10": {
         "python_docker_image": "python:3.10",
+        "python_local_version": "python3.10",
         "black_target_version": '["py310"]',
     },
     "3.11": {
         "python_docker_image": "python:3.11",
+        "python_local_version": "python3.11",
         "black_target_version": '["py311"]',
     },
     "3.12": {
         "python_docker_image": "python:3.12",
+        "python_local_version": "python3.12",
         "black_target_version": '["py312"]',
     },
 }
@@ -47,6 +50,7 @@ class Context:
     root_namespace: str
     black_target_version: str
     python_docker_image: str
+    python_local_version: str
 
     @classmethod
     def get_context(
