@@ -45,8 +45,8 @@ def get_main_cmd(root_pkg: ModuleType) -> Callable:
     )
     def _main_cmd(*, log_level: LogLevel, quiet: bool, **options) -> None:
         if not quiet:
-            enable_console_log()
-            log_level.set_log_level(reset_logging_config=True)
+            enable_console_log(reset_logging_config=True)
+            log_level.set_log_level()
 
     return _main_cmd
 

@@ -22,11 +22,12 @@ class BaseCommand:
         *,
         work_dir: Optional[Path] = None,
         log_level: Optional[LogLevel] = None,
+        reset_logging_config: bool = False,
         **kwargs,
     ) -> None:
         self._command_name = command_name
         self._log_level = log_level or self.default_log_level
-        self._log_level.set_log_level(reset_logging_config=True)
+        self._log_level.set_log_level(reset_logging_config=reset_logging_config)
         self._work_dir = Path(work_dir or os.getcwd()).resolve()
         os.chdir(str(self._work_dir))
         logging.debug(

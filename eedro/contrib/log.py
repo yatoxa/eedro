@@ -1,6 +1,6 @@
 import logging
 from enum import IntEnum
-from typing import Optional, Union
+from typing import Iterable, Optional, Union
 
 DEFAULT_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 DEFAULT_FORMATTER = logging.Formatter(
@@ -12,10 +12,11 @@ DEFAULT_FORMATTER = logging.Formatter(
 def _get_logger(
     *,
     logger: Optional[Union[str, logging.Logger]] = None,
+    handlers: Optional[Iterable[logging.Handler]] = None,
     reset_logging_config: bool = False,
 ) -> logging.Logger:
     if reset_logging_config:
-        logging.basicConfig()
+        logging.basicConfig(force=True, handlers=handlers)
 
     if isinstance(logger, str):
         return logging.getLogger(logger)
@@ -32,17 +33,20 @@ def enable_console_log(
     console_handler.setFormatter(formatter)
     logger = _get_logger(
         logger=logger,
+        handlers=[console_handler],
         reset_logging_config=reset_logging_config,
     )
-    logger.addHandler(console_handler)
+
+    if console_handler not in logger.handlers:
+        logger.addHandler(console_handler)
 
 
 class LogLevel(IntEnum):
-    DEBUG: int = logging.DEBUG
-    INFO: int = logging.INFO
-    WARNING: int = logging.WARNING
-    ERROR: int = logging.ERROR
-    CRITICAL: int = logging.CRITICAL
+    DEBUG = logging.DEBUG
+    INFO = logging.INFO
+    WARNING = logging.WARNING
+    ERROR = logging.ERROR
+    CRITICAL = logging.CRITICAL
 
     def __str__(self) -> str:
         return self.name
