@@ -8,7 +8,7 @@ from typing import Callable, List, Optional, TextIO
 from uuid import uuid4
 
 
-class BufferedWriter:
+class BufferedFileWriter:
     def __init__(
         self,
         *,
@@ -20,7 +20,7 @@ class BufferedWriter:
         buffer_filename_prefix: Optional[str] = None,
         buffer_filename_timestamp_format: Optional[str] = None,
         buffer_filename_extension: str = ".data",
-        save_data_handler: Optional[Callable[[TextIO], None]] = None,
+        post_save_data_handler: Optional[Callable[[pathlib.Path], None]] = None,
         newline: str = "\n",
     ) -> None:
         self._base_dir = base_dir
@@ -34,7 +34,7 @@ class BufferedWriter:
         self._buffer_filename_prefix = buffer_filename_prefix
         self._buffer_filename_timestamp_format = buffer_filename_timestamp_format
         self._buffer_filename_extension = buffer_filename_extension
-        self._save_data_handler = save_data_handler
+        self._post_save_data_handler = post_save_data_handler
         self._newline = newline
         self._buffer_file: Optional[TextIO] = None
         self._counter = 0
@@ -58,9 +58,8 @@ class BufferedWriter:
     def get_new_buffer_file(self) -> TextIO:
         return open(self._base_dir / self.get_new_buffer_filename(), mode="w+")
 
-    def save_data(self, buffer_file: TextIO) -> None:
-        if self._save_data_handler is not None:
-            self._save_data_handler(buffer_file)
+    def save_data(self, buffer_file: TextIO) -> pathlib.Path | None:
+        return pathlib.Path(buffer_file.name).resolve()
 
     def is_ready_to_drain_by_time(self) -> bool:
         return time.time() - self._last_drain_ts > self._save_period_s
@@ -77,9 +76,13 @@ class BufferedWriter:
 
         if force or self.is_ready_to_drain():
             self._buffer_file.seek(0)
-            self.save_data(self._buffer_file)
+            save_data_result = self.save_data(self._buffer_file)
             self._buffer_file.close()
             self._buffer_file = None
+
+            if save_data_result and self._post_save_data_handler is not None:
+                self._post_save_data_handler(save_data_result)
+
             self._counter = 0
             self._last_drain_ts = time.time() + self.get_jitter()
 
@@ -105,23 +108,24 @@ class BufferedWriter:
         self._get_buffer().writelines((line + newline for line in lines))
         self._counter += len(lines)
 
-    def __enter__(self) -> "BufferedWriter":
+    def __enter__(self) -> "BufferedFileWriter":
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self.drain_buffer(force=True)
 
 
-class DelayedBufferedWriter(BufferedWriter):
-    def get_new_buffer_file(self) -> TextIO:
+class DelayedBufferedFileWriter(BufferedFileWriter):
+    def get_new_buffer_file(self) -> io.StringIO:
         return io.StringIO()
 
-    def save_data(self, buffer_file: TextIO) -> None:
+    def save_data(self, buffer_file: io.StringIO) -> pathlib.Path:
         with super().get_new_buffer_file() as output_file:
             output_file.writelines(line for line in buffer_file)
-
+            output_file_path = pathlib.Path(output_file.name).resolve()
             logging.info(
                 "Buffered data saved to file %s | %d rows",
-                pathlib.Path(output_file.name).resolve(),
+                output_file_path,
                 self._counter,
             )
+            return output_file_path
