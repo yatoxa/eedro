@@ -2,5 +2,5 @@
 max-line-length = 88
 extend-ignore = E203
 exclude =
-    venv
+    .venv
     eedro/core/cli/startproject/templates

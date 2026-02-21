@@ -3,6 +3,7 @@ services:
   base-py310:
     image: eedro-base-py310
     build:
+      network: host
       dockerfile: ci/base/Dockerfile
       args:
         PYTHON_VERSION: "3.10"
@@ -10,6 +11,7 @@ services:
   base-py311:
     image: eedro-base-py311
     build:
+      network: host
       dockerfile: ci/base/Dockerfile
       args:
         PYTHON_VERSION: "3.11"
@@ -17,6 +19,7 @@ services:
   base-py312:
     image: eedro-base-py312
     build:
+      network: host
       dockerfile: ci/base/Dockerfile
       args:
         PYTHON_VERSION: "3.12"

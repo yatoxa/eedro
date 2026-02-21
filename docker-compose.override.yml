@@ -2,9 +2,12 @@ services:
 
   tests-py310:
     build:
+      network: host
       dockerfile: ci/tests/Dockerfile
       args:
         BASE_IMAGE: eedro-base-py310
+      additional_contexts:
+        eedro-base-py310: "service:base-py310"
     command: /bin/bash /app/src/ci/tests/run.sh
     volumes:
       - ./:/app/src
@@ -13,9 +16,12 @@ services:
 
   tests-py311:
     build:
+      network: host
       dockerfile: ci/tests/Dockerfile
       args:
         BASE_IMAGE: eedro-base-py311
+      additional_contexts:
+        eedro-base-py311: "service:base-py311"
     command: /bin/bash /app/src/ci/tests/run.sh
     volumes:
       - ./:/app/src
@@ -24,9 +30,12 @@ services:
 
   tests-py312:
     build:
+      network: host
       dockerfile: ci/tests/Dockerfile
       args:
         BASE_IMAGE: eedro-base-py312
+      additional_contexts:
+        eedro-base-py312: "service:base-py312"
     command: /bin/bash /app/src/ci/tests/run.sh
     volumes:
       - ./:/app/src

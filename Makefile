@@ -1,13 +1,13 @@
-VENV_HOME = ./venv
+VENV_HOME = ./.venv
 PYTHON_VENV = $(VENV_HOME)/bin/python
 
 ifeq ($(wildcard $(PYTHON_VENV)),)
   $(info --- venv not found, to initialize it, run make venv or make venv-dev ---)
 endif
 
-PYTHON ?= python3.10
+PYTHON ?= python3.12
 
-.PHONY: venv-init venv-update venv-update-dev venv venv-dev pretty lint pretty-lint docker-clean docker-build docker-up docker-rebuild docker-logs tests
+.PHONY: venv-init venv-update venv-update-dev venv venv-dev pretty lint pretty-lint docker-clean docker-build docker-up docker-rebuild docker-logs tests-py310 tests-py311 tests-py312 tests-sorted tests
 
 venv-init:
 	$(PYTHON) -m venv --copies --clear --upgrade-deps $(VENV_HOME)
@@ -46,6 +46,17 @@ docker-rebuild: docker-clean docker-build docker-up
 
 docker-logs:
 	docker compose logs $(filter-out $@,$(MAKECMDGOALS)) || true
+
+tests-py310:
+	docker compose up tests-py310
+
+tests-py311:
+	docker compose up tests-py311
+
+tests-py312:
+	docker compose up tests-py312
+
+tests-sorted: tests-py310 tests-py311 tests-py312
 
 tests:
 	docker compose up tests-py310 tests-py311 tests-py312
