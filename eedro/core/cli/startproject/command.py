@@ -39,6 +39,16 @@ PYTHON_CONTEXTS = {
         "python_local_version": "python3.12",
         "black_target_version": '["py312"]',
     },
+    "3.13": {
+        "python_docker_image": "python:3.13",
+        "python_local_version": "python3.13",
+        "black_target_version": '["py313"]',
+    },
+    "3.14": {
+        "python_docker_image": "python:3.14",
+        "python_local_version": "python3.14",
+        "black_target_version": '["py314"]',
+    },
 }
 
 
@@ -103,7 +113,7 @@ class StartProjectCommand(BaseCommand):
         dest_dir.mkdir(mode=0o755, parents=True, exist_ok=True)
         return dest_dir
 
-    def ignore_template_file(self, template_file_path: str) -> bool:
+    def ignore_template_file(self, template_file_path: str) -> Optional[bool]:
         for pattern in SOURCE_PATHS_TO_IGNORE:
             if re.match(pattern, template_file_path):
                 return True

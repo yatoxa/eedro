@@ -7,7 +7,7 @@ endif
 
 PYTHON ?= python3.12
 
-.PHONY: venv-init venv-update venv-update-dev venv venv-dev pretty lint pretty-lint docker-clean docker-build docker-up docker-rebuild docker-logs tests-py310 tests-py311 tests-py312 tests-sorted tests
+.PHONY: venv-init venv-update venv-update-dev venv venv-dev pretty lint pretty-lint docker-clean docker-build docker-up docker-rebuild docker-logs tests-py310 tests-py311 tests-py312 tests-py313 tests-py314 tests-sorted tests
 
 venv-init:
 	$(PYTHON) -m venv --copies --clear --upgrade-deps $(VENV_HOME)
@@ -56,10 +56,16 @@ tests-py311:
 tests-py312:
 	docker compose up tests-py312
 
-tests-sorted: tests-py310 tests-py311 tests-py312
+tests-py313:
+	docker compose up tests-py313
+
+tests-py314:
+	docker compose up tests-py314
+
+tests-sorted: tests-py310 tests-py311 tests-py312 tests-py313 tests-py314
 
 tests:
-	docker compose up tests-py310 tests-py311 tests-py312
+	docker compose up tests-py310 tests-py311 tests-py312 tests-py313 tests-py314
 
 %:
 	@:

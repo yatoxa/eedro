@@ -23,3 +23,19 @@ services:
       dockerfile: ci/base/Dockerfile
       args:
         PYTHON_VERSION: "3.12"
+
+  base-py313:
+    image: eedro-base-py313
+    build:
+      network: host
+      dockerfile: ci/base/Dockerfile
+      args:
+        PYTHON_VERSION: "3.13"
+
+  base-py314:
+    image: eedro-base-py314
+    build:
+      network: host
+      dockerfile: ci/base/Dockerfile
+      args:
+        PYTHON_VERSION: "3.14"

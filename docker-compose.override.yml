@@ -41,3 +41,31 @@ services:
       - ./:/app/src
     depends_on:
       - base-py312
+
+  tests-py313:
+    build:
+      network: host
+      dockerfile: ci/tests/Dockerfile
+      args:
+        BASE_IMAGE: eedro-base-py313
+      additional_contexts:
+        eedro-base-py313: "service:base-py313"
+    command: /bin/bash /app/src/ci/tests/run.sh
+    volumes:
+      - ./:/app/src
+    depends_on:
+      - base-py313
+
+  tests-py314:
+    build:
+      network: host
+      dockerfile: ci/tests/Dockerfile
+      args:
+        BASE_IMAGE: eedro-base-py314
+      additional_contexts:
+        eedro-base-py314: "service:base-py314"
+    command: /bin/bash /app/src/ci/tests/run.sh
+    volumes:
+      - ./:/app/src
+    depends_on:
+      - base-py314

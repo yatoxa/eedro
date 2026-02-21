@@ -1,4 +1,4 @@
-VENV_HOME = ./venv
+VENV_HOME = ./.venv
 PYTHON_VENV = $(VENV_HOME)/bin/python
 
 ifeq ($(wildcard $(PYTHON_VENV)),)
