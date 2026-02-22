@@ -1,5 +1,45 @@
-[tool.distutils.egg_info]
-egg_base = '/tmp/eedro_build'
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eedro"
+dynamic = ["version"]
+authors = [{ name = "Anton Yantsen" }]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "click~=8.1",
+    "PyYAML~=6.0",
+    "pydantic~=2.8",
+]
+
+[project.optional-dependencies]
+test = [
+    "coverage",
+    "pytest",
+    "pytest-asyncio",
+]
+dev = [
+    "flake8~=6.0.0",
+    "black~=23.12.0",
+    "isort~=5.12.0",
+]
+
+[project.scripts]
+eedro = "eedro.__main__:main_cmd"
+
+[tool.setuptools.dynamic]
+version = { attr = "eedro.__version__.VERSION" }
+
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.packages.find]
+exclude = ["tests", "tests.*"]
+
+[tool.setuptools.package-data]
+eedro = ["core/cli/startproject/templates/*"]
 
 [tool.isort]
 profile = 'black'

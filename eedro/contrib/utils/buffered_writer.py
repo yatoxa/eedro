@@ -2,7 +2,7 @@ import io
 import logging
 import pathlib
 import time
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from random import randint
 from typing import Callable, List, Optional, TextIO
 from uuid import uuid4
@@ -44,7 +44,9 @@ class BufferedFileWriter:
 
     def get_new_buffer_filename_timestamp(self) -> str:
         if self._buffer_filename_timestamp_format:
-            return datetime.now(tz=UTC).strftime(self._buffer_filename_timestamp_format)
+            return datetime.now(tz=timezone.utc).strftime(
+                self._buffer_filename_timestamp_format
+            )
 
         return ""
 
