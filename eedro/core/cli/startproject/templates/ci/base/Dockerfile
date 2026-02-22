@@ -11,8 +11,6 @@ COPY . ${PROJECT_SRC}
 RUN python -m venv --copies --clear --upgrade-deps ${VENV_HOME} \
     && ${PYTHON_VENV} -m pip install -U pip
 
-RUN ${PYTHON_VENV} -m pip install -U -r ${PROJECT_SRC}/etc/requirements.txt
-
 RUN ${PYTHON_VENV} -m pip install -U -e ${PROJECT_SRC}
 
 RUN echo ". ${VENV_HOME}/bin/activate" >> ~/.bashrc \

@@ -1,5 +1,46 @@
-[tool.distutils.egg_info]
-egg_base = '/tmp/$%{root_namespace}_build'
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "$%{project_name}"
+dynamic = ["version"]
+authors = [{ name = "<name of the author of the $%{project_title} project>" }]
+description = "<description of the $%{project_title} project>"
+license = { text = "<license of the $%{project_title} project>" }
+dependencies = [
+    "click~=8.1",
+    "aiohttp~=3.9",
+    "PyYAML~=6.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "coverage",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-aiohttp",
+]
+dev = [
+    "flake8~=6.0.0",
+    "black~=23.12.0",
+    "isort~=5.12.0",
+]
+
+[project.scripts]
+$%{project_name} = "$%{root_namespace}.__main__:manage_cmd"
+
+[tool.setuptools.dynamic]
+version = { attr = "$%{root_namespace}.__version__.VERSION" }
+
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.packages.find]
+exclude = ["tests", "tests.*"]
+
+#[tool.setuptools.package-data]
+#$%{root_namespace} = ["path/to/resource/dir/*"]
 
 [tool.isort]
 profile = 'black'

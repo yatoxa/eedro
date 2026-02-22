@@ -14,10 +14,10 @@ venv-init:
 
 venv-update:
 	$(PYTHON_VENV) -m pip install -U pip
-	$(PYTHON_VENV) -m pip install -U -r ./etc/requirements.txt
+	$(PYTHON_VENV) -m pip install -U -e ./
 
 venv-update-dev: venv-update
-	$(PYTHON_VENV) -m pip install -U -r ./etc/requirements-dev.txt
+	$(PYTHON_VENV) -m pip install -U -e ./[dev]
 
 venv: venv-init venv-update
 

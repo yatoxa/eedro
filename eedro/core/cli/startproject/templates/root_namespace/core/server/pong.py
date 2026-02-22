@@ -36,7 +36,9 @@ class PongClient:
         return await response.text()
 
 
-pong_client = PongClient([f"{DEFAULT_SCHEME}//{DEFAULT_HOST}:{DEFAULT_PORT}"])
+pong_client = PongClient(
+    [f"{DEFAULT_SCHEME}//{DEFAULT_HOST}:{DEFAULT_PORT}"]  # noqa: E231
+)
 
 
 async def pong(request: web.Request) -> web.Response:

@@ -17,8 +17,12 @@ services:
       - ./:/app/src
 
   tests:
+    image: $%{project_name}-tests
     build:
+      network: host
       dockerfile: ci/tests/Dockerfile
+      additional_contexts:
+        $%{project_name}-base: "service:base"
     command: /bin/bash /app/src/ci/tests/run.sh
     volumes:
       - ./:/app/src
