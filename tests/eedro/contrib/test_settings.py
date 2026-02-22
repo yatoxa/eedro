@@ -4,6 +4,7 @@ import pytest
 
 from eedro.contrib import settings as settings_module
 from eedro.contrib.settings import (
+    CONFIG_PATH_ENV,
     SETTINGS_MODEL_ENV,
     BaseSettingsModel,
     ConfigFileNotFoundError,
@@ -46,23 +47,23 @@ def test_get_settings_model_class_requires_env(monkeypatch):
 def test_get_config_path_returns_existing_path(monkeypatch, tmp_path):
     config_path = tmp_path / "config.yml"
     config_path.write_text("debug: true\n")
-    monkeypatch.setenv("CONFIG", str(config_path))
+    monkeypatch.setenv(CONFIG_PATH_ENV, str(config_path))
 
-    assert _get_config_path("CONFIG") == config_path
+    assert _get_config_path(CONFIG_PATH_ENV) == config_path
 
 
 def test_get_config_path_raises_when_missing(monkeypatch):
     missing = Path("/tmp/eedro-non-existent-config.yml")
-    monkeypatch.setenv("CONFIG", str(missing))
+    monkeypatch.setenv(CONFIG_PATH_ENV, str(missing))
 
     with pytest.raises(ConfigFileNotFoundError):
-        _get_config_path("CONFIG")
+        _get_config_path(CONFIG_PATH_ENV)
 
 
 def test_yaml_settings_model_load_settings(monkeypatch, tmp_path):
     config_path = tmp_path / "config.yml"
     config_path.write_text("debug: true\n")
-    monkeypatch.setenv(YamlSettingsModel._CONFIG_PATH_ENV, str(config_path))
+    monkeypatch.setenv(CONFIG_PATH_ENV, str(config_path))
 
     loaded = YamlSettingsModel.load_settings()
     assert loaded.debug is True

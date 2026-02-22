@@ -8,9 +8,9 @@ from functools import cached_property
 from typing import Optional, Type
 
 import click
-from pydantic.v1.utils import import_string
 
 from ....contrib.cli.base import BaseCommand, CommandError
+from ....contrib.utils import import_string
 
 DEFAULT_TEMPLATES_DIR = pathlib.Path(__file__).parent.resolve() / "templates"
 

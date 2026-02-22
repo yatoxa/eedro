@@ -3,11 +3,13 @@ from functools import cached_property
 from pathlib import Path
 from typing import Any, Type
 
-from pydantic.v1 import BaseSettings
-from pydantic.v1.utils import import_string
+from pydantic_settings import BaseSettings
 from yaml import full_load
 
+from ..contrib.utils import import_string
+
 SETTINGS_MODEL_ENV = "SETTINGS_MODEL"
+CONFIG_PATH_ENV = "CONFIG_PATH"
 
 
 class SettingsError(Exception):
@@ -46,7 +48,7 @@ def _get_settings_model_class() -> Type[BaseSettingsModel]:
 
 def _get_config_path(config_path_env: str) -> Path:
     try:
-        config_path = Path(os.getenv(config_path_env))
+        config_path = Path(os.getenv(config_path_env)).resolve()
     except TypeError as e:
         raise ImproperlyConfiguredError(
             f"The environment variable {config_path_env} must be defined"
@@ -60,11 +62,9 @@ def _get_config_path(config_path_env: str) -> Path:
 
 
 class YamlSettingsModel(BaseSettingsModel):
-    _CONFIG_PATH_ENV = "CONFIG"
-
     @classmethod
     def load_settings(cls) -> "YamlSettingsModel":
-        with open(_get_config_path(cls._CONFIG_PATH_ENV)) as config_file:
+        with open(_get_config_path(CONFIG_PATH_ENV)) as config_file:
             return cls(**full_load(config_file))
 
 
