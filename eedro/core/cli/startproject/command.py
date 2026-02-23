@@ -128,7 +128,7 @@ class StartProjectCommand(BaseCommand):
 
             if not issubclass(context_class, Context):
                 raise click.UsageError(
-                    "Custom context class must be subclass of the Context class."
+                    "A custom context class must be a subclass of the Context class."
                 )
 
             return context_class
