@@ -37,7 +37,7 @@ version = { attr = "$%{root_namespace}.__version__.VERSION" }
 zip-safe = false
 
 [tool.setuptools.packages.find]
-exclude = ["tests", "tests.*"]
+include = ["$%{root_namespace}*"]
 
 #[tool.setuptools.package-data]
 #$%{root_namespace} = ["path/to/resource/dir/*"]

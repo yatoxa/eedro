@@ -12,6 +12,7 @@ def _get_expected_generated_files(project_name: str, root_namespace: str) -> set
         ".flake8",
         ".gitignore",
         "Makefile",
+        "MANIFEST.in",
         "bin/manage.sh",
         "ci/base/Dockerfile",
         "ci/nginx/Dockerfile",

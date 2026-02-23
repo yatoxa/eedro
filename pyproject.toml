@@ -34,12 +34,13 @@ version = { attr = "eedro.__version__.VERSION" }
 
 [tool.setuptools]
 zip-safe = false
+include-package-data = true
 
 [tool.setuptools.packages.find]
-exclude = ["tests", "tests.*"]
+include = ["eedro*"]
 
 [tool.setuptools.package-data]
-eedro = ["core/cli/startproject/templates/*"]
+eedro = ["core/cli/startproject/templates/**/*"]
 
 [tool.isort]
 profile = 'black'
