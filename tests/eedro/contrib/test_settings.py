@@ -10,6 +10,7 @@ from eedro.contrib.settings import (
     ConfigFileNotFoundError,
     ImproperlyConfiguredError,
     LoadSettingsError,
+    SettingsError,
     YamlSettingsModel,
     _get_config_path,
     _get_settings_model_class,
@@ -29,6 +30,12 @@ class BrokenSettings(BaseSettingsModel):
     @classmethod
     def load_settings(cls) -> "BrokenSettings":
         raise ValueError("boom")
+
+
+class ExplicitSettingsErrorSettings(BaseSettingsModel):
+    @classmethod
+    def load_settings(cls) -> "ExplicitSettingsErrorSettings":
+        raise ImproperlyConfiguredError("bad config")
 
 
 def test_get_settings_model_class_uses_env(monkeypatch):
@@ -60,6 +67,13 @@ def test_get_config_path_raises_when_missing(monkeypatch):
         _get_config_path(CONFIG_PATH_ENV)
 
 
+def test_get_config_path_raises_when_env_not_set(monkeypatch):
+    monkeypatch.delenv(CONFIG_PATH_ENV, raising=False)
+
+    with pytest.raises(ImproperlyConfiguredError):
+        _get_config_path(CONFIG_PATH_ENV)
+
+
 def test_yaml_settings_model_load_settings(monkeypatch, tmp_path):
     config_path = tmp_path / "config.yml"
     config_path.write_text("debug: true\n")
@@ -83,3 +97,16 @@ def test_lazy_settings_proxy_passthrough_settings_errors(monkeypatch):
     proxy = settings_module._LazySettingsProxy()
     with pytest.raises(ImproperlyConfiguredError):
         _ = proxy.debug
+
+
+def test_lazy_settings_proxy_passthroughs_explicit_settings_error(monkeypatch):
+    monkeypatch.setenv(SETTINGS_MODEL_ENV, f"{__name__}.ExplicitSettingsErrorSettings")
+
+    proxy = settings_module._LazySettingsProxy()
+    with pytest.raises(SettingsError):
+        _ = proxy.debug
+
+
+def test_base_settings_model_load_settings_not_implemented():
+    with pytest.raises(NotImplementedError):
+        BaseSettingsModel.load_settings()

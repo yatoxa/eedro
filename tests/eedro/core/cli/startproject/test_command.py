@@ -5,6 +5,10 @@ from eedro.contrib.cli.base import CommandError
 from eedro.core.cli.startproject.command import Context, StartProjectCommand
 
 
+class _CustomContext(Context):
+    pass
+
+
 def test_context_get_context_normalizes_project_name():
     context = Context.get_context(
         project_name="my_app",
@@ -84,6 +88,20 @@ def test_context_class_rejects_class_not_inheriting_context(tmp_path):
         _ = command.context_class
 
 
+def test_context_class_loads_custom_subclass(tmp_path):
+    command = StartProjectCommand("startproject", work_dir=tmp_path)
+    command._context_class_path = f"{__name__}._CustomContext"
+
+    assert command.context_class is _CustomContext
+
+
+def test_ignore_template_file_filters_compiled_python_files(tmp_path):
+    command = StartProjectCommand("startproject", work_dir=tmp_path)
+
+    assert command.ignore_template_file("cached.pyc") is True
+    assert command.ignore_template_file("normal.py") is None
+
+
 def test_handle_generates_project_files_from_templates(tmp_path):
     templates_dir = tmp_path / "templates"
     source_root = templates_dir / "root_namespace"
@@ -142,3 +160,26 @@ def test_handle_respects_ignore_for_existing_destination_files(tmp_path):
     )
 
     assert existing_file.read_text() == "manual\n"
+
+
+def test_handle_ignores_compiled_template_files(tmp_path):
+    templates_dir = tmp_path / "templates"
+    templates_dir.mkdir()
+    (templates_dir / "ignored.pyc").write_text("binary-placeholder")
+
+    project_path = tmp_path / "generated"
+    project_path.mkdir()
+
+    command = StartProjectCommand("startproject", work_dir=tmp_path)
+    command.run(
+        project_name="sample-app",
+        project_path=project_path,
+        templates_dir=templates_dir,
+        context_class_path=None,
+        root_namespace="sample_root",
+        python_version="3.12",
+        force=True,
+        ignore=False,
+    )
+
+    assert not (project_path / "ignored.pyc").exists()

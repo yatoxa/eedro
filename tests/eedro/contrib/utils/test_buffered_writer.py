@@ -35,3 +35,23 @@ def test_delayed_buffered_writer_saves_data_to_file(tmp_path):
     files = list(tmp_path.glob("delayed*.data"))
     assert len(files) == 1
     assert files[0].read_text() == "a\nb\n"
+
+
+def test_buffered_writer_uses_timestamp_and_post_save_handler(tmp_path):
+    handled_files = []
+
+    def post_save(path):
+        handled_files.append(path)
+
+    writer = BufferedFileWriter(
+        base_dir=tmp_path,
+        buffer_filename_prefix="with-ts",
+        buffer_filename_timestamp_format="%Y%m%d",
+        post_save_data_handler=post_save,
+    )
+    writer.write("payload")
+    writer.drain_buffer(force=True)
+
+    files = list(tmp_path.glob("with-ts_*.data"))
+    assert len(files) == 1
+    assert handled_files == [files[0].resolve()]

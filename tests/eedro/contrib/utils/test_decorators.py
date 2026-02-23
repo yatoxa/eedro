@@ -100,3 +100,15 @@ async def test_log_func_call_logs_async_function_call():
 
     assert await target(4) == 8
     assert len(log_calls) == 1
+
+
+@pytest.mark.asyncio
+async def test_set_interval_reraises_cancelled_error(monkeypatch):
+    monkeypatch.setattr(decorators, "randint", lambda a, b: 0)
+
+    @decorators.set_interval(interval=0, max_jitter=0)
+    async def target():
+        raise asyncio.CancelledError
+
+    with pytest.raises(asyncio.CancelledError):
+        await target()

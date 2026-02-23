@@ -1,6 +1,6 @@
 import logging
 
-from eedro.contrib.log import LogLevel, enable_console_log
+from eedro.contrib.log import LogLevel, _get_logger, enable_console_log
 
 
 def test_enable_console_log_does_not_duplicate_handler():
@@ -28,3 +28,23 @@ def test_set_log_level_for_logger():
     LogLevel.ERROR.set_log_level(logger=logger)
 
     assert logger.level == logging.ERROR
+
+
+def test_get_logger_by_name():
+    logger = _get_logger(logger="eedro.tests.log.named")
+    assert logger is logging.getLogger("eedro.tests.log.named")
+
+
+def test_set_log_level_for_root_logger():
+    root_logger = logging.getLogger()
+    initial_level = root_logger.level
+    try:
+        LogLevel.WARNING.set_log_level()
+        assert root_logger.level == logging.WARNING
+    finally:
+        root_logger.setLevel(initial_level)
+
+
+def test_log_level_to_string_and_none_conversion():
+    assert str(LogLevel.CRITICAL) == "CRITICAL"
+    assert LogLevel.str_to_log_level(None) is None
