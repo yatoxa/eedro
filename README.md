@@ -1,7 +1,7 @@
 # eedro
 
-`eedro` is a Python CLI tool for bootstrapping new service projects from templates.
-It also ships reusable infrastructure helpers for settings loading, logging, command execution patterns, and runtime utilities.
+**eedro** is a CLI tool for bootstrapping new Python projects from templates.
+It also ships reusable infrastructure helpers for settings loading, logging, command execution patterns, rate limiting, and runtime utilities.
 
 ## Features
 
@@ -112,10 +112,16 @@ Run tests for Python 3.12 in Docker:
 make tests-py312
 ```
 
-Run all configured Python versions:
+Run tests for all configured Python versions:
 
 ```bash
 make tests
+```
+
+or
+
+```bash
+make tests-sorted
 ```
 
 Format and lint:
@@ -129,6 +135,12 @@ or
 
 ```bash
 make pretty-lint
+```
+
+To see all available `make` receipts, use:
+
+```bash
+make help
 ```
 
 ## Roadmap
