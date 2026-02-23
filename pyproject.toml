@@ -5,7 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "eedro"
 dynamic = ["version"]
-authors = [{ name = "Anton Yantsen" }]
+authors = [{ name = "Toxa Yantsen" }]
+license = "MIT"
+license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
