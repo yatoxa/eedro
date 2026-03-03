@@ -65,7 +65,7 @@ class YamlSettingsModel(BaseSettingsModel):
     @classmethod
     def load_settings(cls) -> "YamlSettingsModel":
         with open(_get_config_path(CONFIG_PATH_ENV)) as config_file:
-            return cls(**full_load(config_file))
+            return cls.model_validate(full_load(config_file))
 
 
 class _LazySettingsProxy:

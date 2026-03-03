@@ -6,4 +6,4 @@ ARG PROJECT_WD=${PROJECT_HOME}/run
 ARG VENV_HOME=${PROJECT_HOME}/venv
 ARG PYTHON_VENV=${VENV_HOME}/bin/python
 
-RUN ${PYTHON_VENV} -m pip install -U -e ${PROJECT_SRC}[test]
+RUN ${PYTHON_VENV} -m pip install -U --group "${PROJECT_SRC}/pyproject.toml:test"

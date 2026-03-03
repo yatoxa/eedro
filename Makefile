@@ -19,12 +19,12 @@ venv-init:
 
 .PHONY: venv-update ## Install or update runtime dependencies in venv
 venv-update:
-	$(PYTHON_VENV) -m pip install -U pip
+	$(PYTHON_VENV) -m pip install -U "pip>=25.1"
 	$(PYTHON_VENV) -m pip install -U -e ./
 
 .PHONY: venv-update-dev ## Install or update runtime and dev dependencies in venv
 venv-update-dev: venv-update
-	$(PYTHON_VENV) -m pip install -U -e ./[dev]
+	$(PYTHON_VENV) -m pip install -U --group dev
 
 .PHONY: venv ## Recreate venv and install runtime dependencies
 venv: venv-init venv-update

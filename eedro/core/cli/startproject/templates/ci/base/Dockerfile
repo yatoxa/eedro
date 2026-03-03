@@ -9,7 +9,7 @@ ARG PYTHON_VENV=${VENV_HOME}/bin/python
 COPY . ${PROJECT_SRC}
 
 RUN python -m venv --copies --clear --upgrade-deps ${VENV_HOME} \
-    && ${PYTHON_VENV} -m pip install -U pip
+    && ${PYTHON_VENV} -m pip install -U "pip>=25.1"
 
 RUN ${PYTHON_VENV} -m pip install -U -e ${PROJECT_SRC}
 

@@ -11,21 +11,21 @@ license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "click~=8.1",
-    "PyYAML~=6.0",
+    "click~=8.3.1",
+    "PyYAML~=6.0.3",
     "pydantic-settings~=2.13.1",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 test = [
-    "coverage",
+    "coverage[toml]",
     "pytest",
     "pytest-asyncio",
 ]
 dev = [
-    "flake8~=6.0.0",
-    "black~=23.12.0",
-    "isort~=5.12.0",
+    "flake8~=7.3.0",
+    "black~=26.1.0",
+    "isort~=8.0.1",
 ]
 
 [project.scripts]
@@ -45,31 +45,39 @@ include = ["eedro*"]
 eedro = ["core/cli/startproject/templates/**/*"]
 
 [tool.isort]
-profile = 'black'
+profile = "black"
 skip_gitignore = true
 multi_line_output = 3
 include_trailing_comma = true
 use_parentheses = true
 force_grid_wrap = 0
 line_length = 88
-extend_skip = ['eedro/core/cli/startproject/templates']
+extend_skip = ["eedro/core/cli/startproject/templates"]
 
 [tool.black]
 line-length = 88
-target-version = ['py312']
-extend-exclude='''
+target-version = ["py312"]
+extend-exclude="""
 (
 ^/eedro/core/cli/startproject/templates
 )
-'''
+"""
 
 [tool.pytest.ini_options]
-minversion = '6.0'
-cache_dir = '/tmp/pytest_cache'
-asyncio_mode = 'auto'
+minversion = "6.0"
+cache_dir = "/tmp/pytest_cache"
+asyncio_mode = "auto"
 markers = [
-    'asyncio',
+    "asyncio",
 ]
 testpaths = [
-    'tests',
+    "tests",
 ]
+
+[tool.coverage.run]
+source = [
+    "eedro",
+]
+
+[tool.coverage.report]
+show_missing = true
