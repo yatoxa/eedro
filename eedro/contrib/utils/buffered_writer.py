@@ -26,9 +26,9 @@ class BufferedFileWriter:
         self._base_dir = base_dir
         self._max_size = max_size
         self._save_period_s = save_period_s
-        assert (
-            max_jitter >= 0
-        ), "The max_jitter parameter must be greater than or equal to zero!"
+        assert max_jitter >= 0, (
+            "The max_jitter parameter must be greater than or equal to zero!"
+        )
         self._max_jitter = max_jitter
         self._last_drain_ts = (initial_ts or time.time()) + self.get_jitter()
         self._buffer_filename_prefix = buffer_filename_prefix

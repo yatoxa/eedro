@@ -32,15 +32,15 @@ venv: venv-init venv-update
 .PHONY: venv-dev ## Recreate venv and install runtime and dev dependencies
 venv-dev: venv-init venv-update-dev
 
-.PHONY: pretty ## Run code formatters (isort + black)
+.PHONY: pretty ## Run code formatters (ruff)
 pretty:
-	$(PYTHON_VENV) -m isort .
-	$(PYTHON_VENV) -m black .
+	$(PYTHON_VENV) -m ruff check . --fix
+	$(PYTHON_VENV) -m ruff format .
 
-.PHONY: lint ## Run static checks (flake8 + black --check)
+.PHONY: lint ## Run static checks (ruff)
 lint:
-	$(PYTHON_VENV) -m flake8 .
-	$(PYTHON_VENV) -m black . --check
+	$(PYTHON_VENV) -m ruff check .
+	$(PYTHON_VENV) -m ruff format . --check
 
 .PHONY: pretty-lint ## Format code and then run lint checks
 pretty-lint: pretty lint

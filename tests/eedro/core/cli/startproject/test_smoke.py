@@ -9,7 +9,6 @@ def _get_expected_generated_files(project_name: str, root_namespace: str) -> set
     return {
         ".dockerignore",
         ".editorconfig",
-        ".flake8",
         ".gitignore",
         "Makefile",
         "MANIFEST.in",
@@ -84,13 +83,13 @@ def test_startproject_smoke_generates_expected_project_artifacts(
 
     for file_path in tmp_path.rglob("*"):
         if file_path.is_file():
-            assert (
-                "$%" not in file_path.read_text()
-            ), f"{file_path.name} is rendered incorrectly"
+            assert "$%" not in file_path.read_text(), (
+                f"{file_path.name} is rendered incorrectly"
+            )
 
     pyproject_content = (project_path / "pyproject.toml").read_text()
 
-    assert 'target-version = ["py312"]' in pyproject_content
+    assert 'target-version = "py312"' in pyproject_content
     assert f'name = "{project_name}"' in pyproject_content
     assert (
         f'{project_name} = "{root_namespace}.__main__:manage_cmd"'  # noqa: E231

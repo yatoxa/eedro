@@ -27,27 +27,27 @@ PYTHON_CONTEXTS = {
     "3.10": {
         "python_docker_image": "python:3.10",
         "python_local_version": "python3.10",
-        "black_target_version": '["py310"]',
+        "ruff_target_version": "py310",
     },
     "3.11": {
         "python_docker_image": "python:3.11",
         "python_local_version": "python3.11",
-        "black_target_version": '["py311"]',
+        "ruff_target_version": "py311",
     },
     "3.12": {
         "python_docker_image": "python:3.12",
         "python_local_version": "python3.12",
-        "black_target_version": '["py312"]',
+        "ruff_target_version": "py312",
     },
     "3.13": {
         "python_docker_image": "python:3.13",
         "python_local_version": "python3.13",
-        "black_target_version": '["py313"]',
+        "ruff_target_version": "py313",
     },
     "3.14": {
         "python_docker_image": "python:3.14",
         "python_local_version": "python3.14",
-        "black_target_version": '["py314"]',
+        "ruff_target_version": "py314",
     },
 }
 
@@ -58,7 +58,7 @@ class Context:
     project_name_underscore: str
     project_title: str
     root_namespace: str
-    black_target_version: str
+    ruff_target_version: str
     python_docker_image: str
     python_local_version: str
 

@@ -23,9 +23,7 @@ test = [
     "pytest-asyncio",
 ]
 dev = [
-    "flake8~=7.3.0",
-    "black~=26.1.0",
-    "isort~=8.0.1",
+    "ruff~=0.15.12",
 ]
 
 [project.scripts]
@@ -44,24 +42,17 @@ include = ["eedro*"]
 [tool.setuptools.package-data]
 eedro = ["core/cli/startproject/templates/**/*"]
 
-[tool.isort]
-profile = "black"
-skip_gitignore = true
-multi_line_output = 3
-include_trailing_comma = true
-use_parentheses = true
-force_grid_wrap = 0
-line_length = 88
-extend_skip = ["eedro/core/cli/startproject/templates"]
-
-[tool.black]
+[tool.ruff]
 line-length = 88
-target-version = ["py312"]
-extend-exclude="""
-(
-^/eedro/core/cli/startproject/templates
-)
-"""
+target-version = "py312"
+extend-exclude = [
+    "build",
+    "eedro/core/cli/startproject/templates",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+extend-ignore = ["E203"]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
